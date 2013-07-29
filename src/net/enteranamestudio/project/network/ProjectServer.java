@@ -10,9 +10,13 @@ import net.enteranamestudio.project.network.packets.PacketDeletePlayer;
 import net.enteranamestudio.project.network.packets.PacketDestroyTile;
 import net.enteranamestudio.project.network.packets.PacketInitPlayer;
 import net.enteranamestudio.project.network.packets.PacketJoin;
+import net.enteranamestudio.project.network.packets.PacketKeyCode;
 import net.enteranamestudio.project.network.packets.PacketMessage;
 import net.enteranamestudio.project.network.packets.PacketNewTile;
 import net.enteranamestudio.project.network.packets.PacketPositionPlayer;
+import net.enteranamestudio.project.states.Connect;
+
+import org.newdawn.slick.Input;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -49,14 +53,15 @@ public class ProjectServer {
 						Player player = null;
 						
 						if (players.size() == 0)
-							player = new Player(connection.getID(), packetJoin.username, map.getSpawn1X(), map.getSpawn1Y());
+							player = new Player(connection.getID(), packetJoin.username, 1, map.getSpawn1X(), map.getSpawn1Y());
 						
 						else if (players.size() == 1)
-							player = new Player(connection.getID(), packetJoin.username, map.getSpawn2X(), map.getSpawn2Y());
+							player = new Player(connection.getID(), packetJoin.username, 1, map.getSpawn2X(), map.getSpawn2Y());
 						
 						PacketInitPlayer packetPlayer = new PacketInitPlayer();
 						packetPlayer.id = player.getId();
 						packetPlayer.name = player.getName();
+						packetPlayer.player = player.getPlayer();
 						packetPlayer.x = player.getX();
 						packetPlayer.y = player.getY();
 						
@@ -113,17 +118,45 @@ public class ProjectServer {
 					server.sendToAllTCP(message);
 				}
 				
-				// WHEN THE SERVER RECEIVED A PLAYER UPDATE
-				if (object instanceof PacketPositionPlayer) {
-					PacketPositionPlayer pos = (PacketPositionPlayer)object;
+				// WHEN THE SERVER RECEIVED A KEY PRESSED
+				if (object instanceof PacketKeyCode) {
+					PacketKeyCode keyCode = (PacketKeyCode)object;
+					PacketPositionPlayer position = new PacketPositionPlayer();
 					
-					server.sendToAllExceptTCP(connection.getID(), pos);
+					switch (keyCode.keyCode) {
+						case Input.KEY_Z:
+							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 0);
+							position.id = (byte) connection.getID();
+							position.x = (short) ((Player)players.get(connection.getID())).getX();
+							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							server.sendToAllUDP(position);
+							break;
+						case Input.KEY_Q:
+							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 1);
+							position.id = (byte) connection.getID();
+							position.x = (short) ((Player)players.get(connection.getID())).getX();
+							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							server.sendToAllUDP(position);
+							break;
+						case Input.KEY_S:
+							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 2);
+							position.id = (byte) connection.getID();
+							position.x = (short) ((Player)players.get(connection.getID())).getX();
+							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							server.sendToAllUDP(position);
+							break;
+						case Input.KEY_D:
+							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 3);
+							position.id = (byte) connection.getID();
+							position.x = (short) ((Player)players.get(connection.getID())).getX();
+							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							server.sendToAllUDP(position);
+							break;
+					}
 				}
 			}
 			
-			/*
-			 * WHEN SOMEONE DISCONECT
-			 */
+			// WHEN SOMEONE DISCONECT
 			public void disconnected(Connection connection) {
 				PacketMessage message = new PacketMessage();
 				message.text = "[SERVER] " + ((Player)players.get(connection.getID())).getName() + " has disconnected :-(";
@@ -135,7 +168,7 @@ public class ProjectServer {
 			}
 		});
 		
-		this.server.bind(20815);
+		this.server.bind(20815, 20815);
 		this.server.start();
 	}
 	
@@ -146,15 +179,19 @@ public class ProjectServer {
 	public boolean verify(String username, Connection connection) {
 		int index = 0;
 		
-		if (players.size() == 2) 
+		if (players.size() == 2) {
+			Connect.message = "Server is full";
 			return false;
+		}
 		
 		if (players.size() == 1) {
 			if (giveNotNull() != 0)
 				index = giveNotNull();
 			
-			if (username.equals(((Player)players.get(index)).getName())) 
+			if (username.equals(((Player)players.get(index)).getName())) {
+				Connect.message = "Someone has the same username";
 				return false;
+			}
 		}
 		
 		return true;
@@ -177,7 +214,7 @@ public class ProjectServer {
 			tick();
 			
 			try {
-				Thread.sleep(16);
+				Thread.sleep(1000 / 30);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

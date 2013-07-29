@@ -26,6 +26,7 @@ public class Connect extends BasicGameState {
 	
 	private String messageName;
 	private String messageIP;
+	public static String message;
 	
 	public Connect(Project project) {
 		super();
@@ -39,13 +40,14 @@ public class Connect extends BasicGameState {
 		this.buttons = new ArrayList<Button>();
 		this.buttons.add(new Button(Project.dimension.width / 2 - 75, 250, 1));
 		
-		this.usernameField = new TextField(container, Resources.fontMediumSize, Project.dimension.width / 2 - 40, 150, 80, 20);
-		this.ipField = new TextField(container, Resources.fontMediumSize, Project.dimension.width / 2 - 40, 215, 80, 20);
+		this.usernameField = new TextField(container, Resources.fontTextSize, Project.dimension.width / 2 - 40, 150, 80, 20);
+		this.ipField = new TextField(container, Resources.fontTextSize, Project.dimension.width / 2 - 40, 215, 80, 20);
 		this.ipField.setBorderColor(Color.transparent);
 		this.usernameField.setBorderColor(Color.transparent);
 		
 		this.messageName = "Enter your username";
 		this.messageIP = "Enter a valid ip";
+		message = "";
 	}
 
 	public void render(GameContainer container, StateBasedGame arg1, Graphics g) throws SlickException {
@@ -63,6 +65,7 @@ public class Connect extends BasicGameState {
 		
 		g.drawString(messageName, Project.dimension.width / 2 - ((messageIP.length() / 4) * 12) - 10, 130);
 		g.drawString(messageIP, Project.dimension.width / 2 - ((messageIP.length() / 4) * 12) + 8, 195);
+		g.drawString("", 408 - (message.length() * 16) / 2, 250);
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
@@ -99,13 +102,13 @@ public class Connect extends BasicGameState {
 	
 	public void setConnectPolling(String username, String ip, StateBasedGame game) {
 		if (project.connectToServer(username, ip, 20815)) {
-			this.messageIP = "Connected!";
+			message = "Connected!";
 			
 			game.enterState(10);
 		}
 		
 		else 
-			this.messageIP = "Could not connect to server";
+			message = "Could not connect to server";
 	}
 
 	public int getID() {

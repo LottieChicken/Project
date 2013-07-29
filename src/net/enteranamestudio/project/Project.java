@@ -43,13 +43,13 @@ public class Project extends StateBasedGame {
 	
 	public boolean connectToServer(String username, String ip, int port) {
 		try {
-			this.client = new Client();
-			this.client.start();
+			client = new Client();
+			client.start();
 			
 			Kryo kryo = client.getKryo();
 			Resources.register(kryo);
 			
-			this.client.addListener(new Listener() {
+			client.addListener(new Listener() {
 				public void received(Connection connection , Object object) {
 					if (object instanceof PacketGame) {
 						
@@ -72,17 +72,21 @@ public class Project extends StateBasedGame {
 						PacketInitPlayer packetPlayer = (PacketInitPlayer)object;
 						
 						if (!Game.player.isInit()) {
-							Game.player.init(packetPlayer.id, packetPlayer.name, packetPlayer.x, packetPlayer.y);
+							Game.player.init(packetPlayer.id, packetPlayer.name, packetPlayer.player, packetPlayer.x, packetPlayer.y);
 						}
 						
 						else
-							Game.other.init(packetPlayer.id, packetPlayer.name, packetPlayer.x, packetPlayer.y);
+							Game.other.init(packetPlayer.id, packetPlayer.name, packetPlayer.player, packetPlayer.x, packetPlayer.y);
 					}
 					
 					if (object instanceof PacketPositionPlayer) {
 						PacketPositionPlayer pos = (PacketPositionPlayer)object;
+
+						if (pos.id == Game.player.getId())
+							Game.player.setLocation(pos.x, pos.y);
 						
-						Game.other.setLocation(pos.x, pos.y);
+						else if (pos.id == Game.other.getId())
+							Game.other.setLocation(pos.x, pos.y);
 					}
 					
 					if (object instanceof PacketDeletePlayer) {
@@ -97,15 +101,15 @@ public class Project extends StateBasedGame {
 			PacketJoin request = new PacketJoin();
 			request.username = username;
 			
-			this.client.connect(10000, ip, port);
-			this.client.sendTCP(request);
+			client.connect(10000, ip, port, port);
+			client.sendTCP(request);
 			
-			Game.client = this.client;
+			Game.client = client;
 			
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.client.close();
+			client.close();
 			
 			return false;
 		}

@@ -43,6 +43,8 @@ public class Game extends BasicGameState {
 	private static boolean isTextVisible;
 	private static Timer textVisibleDuration;
 	
+	private boolean verbose = false;
+	
 	public Game(Client _client) {
 		client = _client;
 	}
@@ -58,17 +60,16 @@ public class Game extends BasicGameState {
 		offX = 0;
 		offY = 0;
 		
-		player = new Player(1,"no name", 0, 0);
-		other = new Player(2, "no name", 0, 0);
+		player = new Player(1,"no name", 1, 0, 0);
+		other = new Player(2, "no name", 1, 0, 0);
 		
 		for (int i = 0; i < chatText.length; i++) {
 			chatText[i] = "";
 		}
 		
 		this.chatField = new TextField(container, Resources.font, 10, 541, 200, 20);
-		this.chatField.setBackgroundColor(Color.white);
-		this.chatField.setBorderColor(Color.black);
-		this.chatField.setTextColor(Color.black);
+		this.chatField.setBackgroundColor(Color.transparent);
+		this.chatField.setBorderColor(Color.transparent);
 		this.chatField.setMaxLength(80);
 		this.isChatVisible = false;
 		isTextVisible = true;
@@ -78,7 +79,6 @@ public class Game extends BasicGameState {
 	}
 
 	public void render(GameContainer container, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.setColor(Color.white);
 		g.setFont(Resources.font);
 		
 		// MAP RENDER 
@@ -88,17 +88,15 @@ public class Game extends BasicGameState {
 		// PLAYERS RENDER
 		player.render(g);
 		
+		g.resetTransform();
+		
 		if (other != null)
 			other.render(g);
-		
-		g.resetTransform();
 		
 		// CHAT MESSAGES AND LOG RENDER
 		if (isTextVisible) {
 			for (int i = 0; i < chatText.length; i++) {
-				g.setColor(Color.black);
 				g.drawString(chatText[i], 10, 521 - i * 20);
-				g.setColor(Color.white);
 			}
 		}
 		
@@ -106,11 +104,22 @@ public class Game extends BasicGameState {
 		if (isChatVisible)
 			this.chatField.render(container, g);
 		
-		g.drawString("FPS : "+container.getFPS(), 10, 10);
-		g.drawString("x : "+player.getX(), 10, 20);
-		g.drawString("y : "+player.getY(), 10, 30);
-		g.drawString("other : "+other.getName(), 10, 40);
-		g.drawString("other : "+other.isInit(), 10, 50);
+		// PLAYER INFO MENU RENDER
+		Resources.playerInfo.draw();
+		Resources.faces.getSprite(player.getPlayer() - 1, 0).draw(0, -5, 0.5f);
+		Resources.lifeFull.draw(99, 27);
+		Resources.lifeBar.draw(94, 22);
+		g.setFont(Resources.fontMediumSize);
+		g.drawString(player.getName(), 80, 60);
+		
+		// VERBOSE
+		if (verbose) {
+			g.drawString("FPS : "+container.getFPS(), 10, 210);
+			g.drawString("x : "+player.getX(), 10, 220);
+			g.drawString("y : "+player.getY(), 10, 230);
+			g.drawString("other : "+other.getName(), 10, 240);
+			g.drawString("other : "+other.isInit(), 10, 250);
+		}
 	}
 
 	public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
@@ -124,7 +133,7 @@ public class Game extends BasicGameState {
 			screen.setLocation(offX, offY);
 			
 			// MANAGE PLAYER
-			player.tick(input, client, delta);
+			player.tick(input, client, isChatVisible, delta);
 			
 			// MANAGE INPUTS
 			this.inputHandler(input, container, game);
@@ -146,17 +155,19 @@ public class Game extends BasicGameState {
 	
 	public void inputHandler(Input input, GameContainer container, StateBasedGame game) throws SlickException {
 		if (input.isKeyPressed(Input.KEY_F)) {
-			if (!isChatVisible && game.getCurrentStateID() == this.getID()) {
-				if (!container.isFullscreen() ) {
-					Project.dimension = new Dimension(container.getScreenWidth(), container.getScreenHeight());
-					AppGameContainer app = (AppGameContainer)container;
-					app.setDisplayMode(Project.dimension.width, Project.dimension.height, true);
-				}
-				
-				else {
-					Project.dimension = new Dimension(816, 576);
-					AppGameContainer app = (AppGameContainer)container;
-					app.setDisplayMode(Project.dimension.width, Project.dimension.height, false);
+			if (!isChatVisible) {
+				if (game.getCurrentStateID() == this.getID()) {
+					if (!container.isFullscreen() ) {
+						Project.dimension = new Dimension(container.getScreenWidth(), container.getScreenHeight());
+						AppGameContainer app = (AppGameContainer)container;
+						app.setDisplayMode(Project.dimension.width, Project.dimension.height, true);
+					}
+					
+					else {
+						Project.dimension = new Dimension(816, 576);
+						AppGameContainer app = (AppGameContainer)container;
+						app.setDisplayMode(Project.dimension.width, Project.dimension.height, false);
+					}
 				}
 			}
 		}
@@ -185,6 +196,14 @@ public class Game extends BasicGameState {
 			
 			else
 				this.isChatVisible = true;
+		}
+		
+		if (input.isKeyPressed(Input.KEY_V)) {
+			if (!verbose)
+				this.verbose = true;
+			
+			else
+				this.verbose = false;
 		}
 	}
 	
