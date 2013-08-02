@@ -86,7 +86,7 @@ public class Project extends StateBasedGame {
 							Game.player.setLocation(pos.x, pos.y);
 						
 						else if (pos.id == Game.other.getId())
-							Game.other.setLocation(pos.x, pos.y);
+							Game.other.setLocation(pos.x, pos.y, pos.angle);
 					}
 					
 					if (object instanceof PacketDeletePlayer) {

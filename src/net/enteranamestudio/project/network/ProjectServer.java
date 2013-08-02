@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import net.enteranamestudio.project.Map;
-import net.enteranamestudio.project.Player;
 import net.enteranamestudio.project.Resources;
+import net.enteranamestudio.project.entities.Player;
 import net.enteranamestudio.project.network.packets.PacketDeletePlayer;
 import net.enteranamestudio.project.network.packets.PacketDestroyTile;
 import net.enteranamestudio.project.network.packets.PacketInitPlayer;
@@ -129,6 +129,7 @@ public class ProjectServer {
 							position.id = (byte) connection.getID();
 							position.x = (short) ((Player)players.get(connection.getID())).getX();
 							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							position.angle = ((Player)players.get(connection.getID())).getAngle();
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_Q:
@@ -136,6 +137,7 @@ public class ProjectServer {
 							position.id = (byte) connection.getID();
 							position.x = (short) ((Player)players.get(connection.getID())).getX();
 							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							position.angle = ((Player)players.get(connection.getID())).getAngle();
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_S:
@@ -143,6 +145,7 @@ public class ProjectServer {
 							position.id = (byte) connection.getID();
 							position.x = (short) ((Player)players.get(connection.getID())).getX();
 							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							position.angle = ((Player)players.get(connection.getID())).getAngle();
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_D:
@@ -150,6 +153,7 @@ public class ProjectServer {
 							position.id = (byte) connection.getID();
 							position.x = (short) ((Player)players.get(connection.getID())).getX();
 							position.y = (short) ((Player)players.get(connection.getID())).getY();
+							position.angle = ((Player)players.get(connection.getID())).getAngle();
 							server.sendToAllUDP(position);
 							break;
 					}
@@ -214,7 +218,7 @@ public class ProjectServer {
 			tick();
 			
 			try {
-				Thread.sleep(1000 / 30);
+				Thread.sleep(30);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

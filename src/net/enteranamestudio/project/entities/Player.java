@@ -1,5 +1,6 @@
-package net.enteranamestudio.project;
+package net.enteranamestudio.project.entities;
 
+import net.enteranamestudio.project.Resources;
 import net.enteranamestudio.project.network.packets.PacketKeyCode;
 import net.enteranamestudio.project.states.Game;
 
@@ -67,13 +68,13 @@ public class Player {
 		//	g.fill(hitbox);
 			
 			if (player == 1) {
-				g.rotate(x + 29, y + 20, -angle);
+				g.rotate(x - Game.offX + 29, y - Game.offY + 20, -angle);
 				
 				if (!run)
-					Resources.girl.getSprite(0, 0).draw(x, y, 0.4f);   
+					Resources.girl.getSprite(0, 0).draw(x - Game.offX, y - Game.offY, 0.4f);   
 				
 				else 
-					Resources.girlRunningAnimation.draw(x, y, 150 * 0.4f, 150 * 0.4f);
+					Resources.girlRunningAnimation.draw(x - Game.offX, y - Game.offY, 150 * 0.4f, 150 * 0.4f);
 				
 				g.resetTransform();
 			}
@@ -183,6 +184,13 @@ public class Player {
 	public void setLocation(int x, int y) {
 		this.x = x;
 		this.y = y;
+		this.hitbox.setLocation(x, y);
+	}
+	
+	public void setLocation(int x, int y, float angle) {
+		this.x = x;
+		this.y = y;
+		this.angle = angle;
 		this.hitbox.setLocation(x, y);
 	}
 

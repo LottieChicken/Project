@@ -3,9 +3,9 @@ package net.enteranamestudio.project.states;
 import java.awt.Dimension;
 
 import net.enteranamestudio.project.Map;
-import net.enteranamestudio.project.Player;
 import net.enteranamestudio.project.Project;
 import net.enteranamestudio.project.Resources;
+import net.enteranamestudio.project.entities.Player;
 import net.enteranamestudio.project.network.packets.PacketMessage;
 import net.enteranamestudio.project.util.Timer;
 
@@ -80,18 +80,18 @@ public class Game extends BasicGameState {
 
 	public void render(GameContainer container, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.setFont(Resources.font);
-		
+
 		// MAP RENDER 
 		g.translate(-offX, -offY);
 		map.render(g);
-		
-		// PLAYERS RENDER
-		player.render(g);
-		
 		g.resetTransform();
 		
-		if (other != null)
-			other.render(g);
+		// PLAYERS RENDER
+		g.setAntiAlias(true);
+		
+		other.render(g);
+		
+		player.render(g);
 		
 		// CHAT MESSAGES AND LOG RENDER
 		if (isTextVisible) {
@@ -107,18 +107,21 @@ public class Game extends BasicGameState {
 		// PLAYER INFO MENU RENDER
 		Resources.playerInfo.draw();
 		Resources.faces.getSprite(player.getPlayer() - 1, 0).draw(0, -5, 0.5f);
-		Resources.lifeFull.draw(99, 27);
-		Resources.lifeBar.draw(94, 22);
+		Resources.lifeFull.draw(125, 9);
+		Resources.lifeBar.draw(124, 8);
+		g.drawString(""+player.getLife()+"/100", 160, 22);
 		g.setFont(Resources.fontMediumSize);
 		g.drawString(player.getName(), 80, 60);
 		
 		// VERBOSE
 		if (verbose) {
 			g.drawString("FPS : "+container.getFPS(), 10, 210);
-			g.drawString("x : "+player.getX(), 10, 220);
-			g.drawString("y : "+player.getY(), 10, 230);
-			g.drawString("other : "+other.getName(), 10, 240);
-			g.drawString("other : "+other.isInit(), 10, 250);
+			g.drawString("x : "+player.getX(), 10, 230);
+			g.drawString("y : "+player.getY(), 10, 250);
+			g.drawString("sx : "+offX, 10, 270);
+			g.drawString("sy : "+offY, 10, 290);
+			g.drawString("other : "+other.getName(), 10, 310);
+			g.drawString("other x|y : "+other.getX()+" | "+other.getY(), 10, 330);
 		}
 	}
 

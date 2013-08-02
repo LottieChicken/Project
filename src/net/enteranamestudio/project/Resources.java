@@ -11,7 +11,6 @@ import net.enteranamestudio.project.network.packets.PacketKeyCode;
 import net.enteranamestudio.project.network.packets.PacketMessage;
 import net.enteranamestudio.project.network.packets.PacketNewTile;
 import net.enteranamestudio.project.network.packets.PacketPositionPlayer;
-import net.enteranamestudio.project.tiles.Sand;
 import net.enteranamestudio.project.tiles.Tile;
 
 import org.newdawn.slick.Animation;
@@ -54,7 +53,7 @@ public class Resources {
 		
 		buttons = new SpriteSheet("res/buttons.png", 150, 50);
 		tiles = new SpriteSheet("res/tiles.png", 16, 16);
-		faces = new SpriteSheet("res/players/faces.png", 180, 175);
+		faces = new SpriteSheet("res/players/faces.png", 160, 160);
 		girl = new SpriteSheet("res/players/girl.png", 150, 150);
 		
 		girlRunningAnimation = new Animation();
@@ -100,7 +99,6 @@ public class Resources {
 		kryo.register(Tile.class);
 		kryo.register(Tile[].class);
 		kryo.register(Tile[][].class);
-		kryo.register(Sand.class);
 		kryo.register(Image.class);
 		kryo.register(Rectangle.class);
 		kryo.register(float[].class);
