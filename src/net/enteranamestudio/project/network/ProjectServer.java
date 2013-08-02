@@ -53,10 +53,10 @@ public class ProjectServer {
 						Player player = null;
 						
 						if (players.size() == 0)
-							player = new Player(connection.getID(), packetJoin.username, 1, map.getSpawn1X(), map.getSpawn1Y());
+							player = new Player((byte) connection.getID(), packetJoin.username, 1, map.getSpawn1X(), map.getSpawn1Y());
 						
 						else if (players.size() == 1)
-							player = new Player(connection.getID(), packetJoin.username, 1, map.getSpawn2X(), map.getSpawn2Y());
+							player = new Player((byte) connection.getID(), packetJoin.username, 1, map.getSpawn2X(), map.getSpawn2Y());
 						
 						PacketInitPlayer packetPlayer = new PacketInitPlayer();
 						packetPlayer.id = player.getId();
@@ -122,38 +122,27 @@ public class ProjectServer {
 				if (object instanceof PacketKeyCode) {
 					PacketKeyCode keyCode = (PacketKeyCode)object;
 					PacketPositionPlayer position = new PacketPositionPlayer();
+					Player player = (Player)players.get(connection.getID());
 					
 					switch (keyCode.keyCode) {
 						case Input.KEY_Z:
-							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 0);
-							position.id = (byte) connection.getID();
-							position.x = (short) ((Player)players.get(connection.getID())).getX();
-							position.y = (short) ((Player)players.get(connection.getID())).getY();
-							position.angle = ((Player)players.get(connection.getID())).getAngle();
+							player.move(keyCode.delta, keyCode.angle, 0);
+							position = wrapPosition(player);
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_Q:
-							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 1);
-							position.id = (byte) connection.getID();
-							position.x = (short) ((Player)players.get(connection.getID())).getX();
-							position.y = (short) ((Player)players.get(connection.getID())).getY();
-							position.angle = ((Player)players.get(connection.getID())).getAngle();
+							player.move(keyCode.delta, keyCode.angle, 1);
+							position = wrapPosition(player);
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_S:
-							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 2);
-							position.id = (byte) connection.getID();
-							position.x = (short) ((Player)players.get(connection.getID())).getX();
-							position.y = (short) ((Player)players.get(connection.getID())).getY();
-							position.angle = ((Player)players.get(connection.getID())).getAngle();
+							player.move(keyCode.delta, keyCode.angle, 2);
+							position = wrapPosition(player);
 							server.sendToAllUDP(position);
 							break;
 						case Input.KEY_D:
-							((Player)players.get(connection.getID())).move(keyCode.delta, keyCode.angle, 3);
-							position.id = (byte) connection.getID();
-							position.x = (short) ((Player)players.get(connection.getID())).getX();
-							position.y = (short) ((Player)players.get(connection.getID())).getY();
-							position.angle = ((Player)players.get(connection.getID())).getAngle();
+							player.move(keyCode.delta, keyCode.angle, 3);
+							position = wrapPosition(player);
 							server.sendToAllUDP(position);
 							break;
 					}
@@ -178,6 +167,17 @@ public class ProjectServer {
 	
 	public static void tick() {
 		
+	}
+	
+	public PacketPositionPlayer wrapPosition(Player player) {
+		PacketPositionPlayer position = new PacketPositionPlayer();
+		
+		position.id = player.getId();
+		position.x = player.getX();
+		position.y = player.getY();
+		position.angle = player.getAngle();
+		
+		return position;
 	}
 	
 	public boolean verify(String username, Connection connection) {

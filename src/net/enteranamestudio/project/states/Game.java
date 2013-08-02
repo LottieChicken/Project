@@ -60,8 +60,8 @@ public class Game extends BasicGameState {
 		offX = 0;
 		offY = 0;
 		
-		player = new Player(1,"no name", 1, 0, 0);
-		other = new Player(2, "no name", 1, 0, 0);
+		player = new Player(1, "no name", 1, 0, 0);
+		other = new Player(2, "no name", 1, 1, 1);
 		
 		for (int i = 0; i < chatText.length; i++) {
 			chatText[i] = "";

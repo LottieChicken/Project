@@ -13,12 +13,13 @@ import com.esotericsoftware.kryonet.Client;
 
 public class Player {
 	
-	private int id;
+	private byte id;
+	
 	private String name;
 	private int player;
 	
-	private int x;
-	private int y;
+	private short x;
+	private short y;
 	private float angle;
 	private Vector2f speed;
 	private Rectangle hitbox;
@@ -31,12 +32,12 @@ public class Player {
 	private boolean init;
 	
 	public Player(int id, String name, int player, int x, int y) {
-		this.id = id;
+		this.id = (byte)id;
 		this.name = name;
 		this.player = player;
 		
-		this.x = x;
-		this.y = y;
+		this.x = (short)x;
+		this.y = (short)y;
 		this.angle = 0;
 		this.speed = new Vector2f(0, 0);
 		this.hitbox = new Rectangle(x, y, 32, 32);
@@ -84,42 +85,22 @@ public class Player {
 	public void input(Input input, Client client, int delta) {
 		if (input.isKeyDown(Input.KEY_Z)) {
 			this.run = true;
-			
-			PacketKeyCode keyCode = new PacketKeyCode();
-			keyCode.keyCode = Input.KEY_Z;
-			keyCode.angle = this.angle;
-			keyCode.delta = (byte) delta;
-			client.sendUDP(keyCode);
+			client.sendUDP(this.wrapKeyCode(Input.KEY_Z, delta));
 		}
 		
 		else if (input.isKeyDown(Input.KEY_Q)) {
 			this.run = true;
-			
-			PacketKeyCode keyCode = new PacketKeyCode();
-			keyCode.keyCode = Input.KEY_Q;
-			keyCode.angle = this.angle;
-			keyCode.delta = (byte) delta;
-			client.sendUDP(keyCode);
+			client.sendUDP(this.wrapKeyCode(Input.KEY_Q, delta));
 		}
 		
 		else if (input.isKeyDown(Input.KEY_S)) {
 			this.run = true;
-			
-			PacketKeyCode keyCode = new PacketKeyCode();
-			keyCode.keyCode = Input.KEY_S;
-			keyCode.angle = this.angle;
-			keyCode.delta = (byte) delta;
-			client.sendUDP(keyCode);
+			client.sendUDP(this.wrapKeyCode(Input.KEY_S, delta));
 		}
 		
 		else if (input.isKeyDown(Input.KEY_D)) {
 			this.run = true;
-			
-			PacketKeyCode keyCode = new PacketKeyCode();
-			keyCode.keyCode = Input.KEY_D;
-			keyCode.angle = this.angle;
-			keyCode.delta = (byte) delta;
-			client.sendUDP(keyCode);
+			client.sendUDP(this.wrapKeyCode(Input.KEY_D, delta));
 		}
 		
 		else
@@ -147,6 +128,10 @@ public class Player {
 		if (direction == 3) 
 			this.x += (Math.sin(Math.toRadians(angle)) * speed.y) * delta;
 		
+		this.checkMapBorder();
+	}
+	
+	public void checkMapBorder() {
 		if (x < 0)
 			this.x = 0;
 		
@@ -160,12 +145,21 @@ public class Player {
 			this.y = 2400 - 42;
 	}
 	
+	public PacketKeyCode wrapKeyCode(int key, int delta) {
+		PacketKeyCode keyCode = new PacketKeyCode();
+		keyCode.keyCode = (short) key;
+		keyCode.angle = this.angle;
+		keyCode.delta = (byte) delta;
+		
+		return keyCode;
+	}
+	
 	public void tickHitbox() {
 		this.hitbox.setX(x);
 		this.hitbox.setY(y);
 	}
 	
-	public void init(int id, String name, int player, int x, int y) {
+	public void init(byte id, String name, int player, short x, short y) {
 		this.id = id;
 		this.name = name;
 		this.player = player;
@@ -181,20 +175,20 @@ public class Player {
 		this.alive = false;
 	}
 	
-	public void setLocation(int x, int y) {
+	public void setLocation(short x, short y) {
 		this.x = x;
 		this.y = y;
 		this.hitbox.setLocation(x, y);
 	}
 	
-	public void setLocation(int x, int y, float angle) {
+	public void setLocation(short x, short y, float angle) {
 		this.x = x;
 		this.y = y;
 		this.angle = angle;
 		this.hitbox.setLocation(x, y);
 	}
 
-	public int getId() {
+	public byte getId() {
 		return id;
 	}
 
@@ -206,11 +200,11 @@ public class Player {
 		return player;
 	}
 
-	public int getX() {
+	public short getX() {
 		return x;
 	}
 
-	public int getY() {
+	public short getY() {
 		return y;
 	}
 
