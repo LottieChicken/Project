@@ -34,9 +34,8 @@ public class ClientListener extends Listener {
 		if (object instanceof PacketInitPlayer) {
 			PacketInitPlayer packetPlayer = (PacketInitPlayer)object;
 			
-			if (!Game.player.isInit()) {
+			if (!Game.player.isInit())
 				Game.player.init(packetPlayer.id, packetPlayer.name, packetPlayer.player, packetPlayer.x, packetPlayer.y);
-			}
 			
 			else
 				Game.other.init(packetPlayer.id, packetPlayer.name, packetPlayer.player, packetPlayer.x, packetPlayer.y);

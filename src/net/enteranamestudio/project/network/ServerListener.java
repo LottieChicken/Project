@@ -29,44 +29,32 @@ public class ServerListener extends Listener {
 		if (object instanceof PacketJoin) {
 			PacketJoin packetJoin = (PacketJoin)object;
 			
-			if (verify(packetJoin.username, connection)) {
+			// VERIFYING PLAYER USERNAME AND SERVER LENGTH
+			if (verify(packetJoin.username)) {
+				int currentPlayerID = 1;
 				Player player = null;
 				
 				if (ProjectServer.players.size() == 0)
 					player = new Player((byte) connection.getID(), packetJoin.username, 1, ProjectServer.map.getSpawn1X(), ProjectServer.map.getSpawn1Y());
 				
-				else if (ProjectServer.players.size() == 1)
+				else if (ProjectServer.players.size() == 1) {
 					player = new Player((byte) connection.getID(), packetJoin.username, 1, ProjectServer.map.getSpawn2X(), ProjectServer.map.getSpawn2Y());
-				
-				PacketInitPlayer packetPlayer = new PacketInitPlayer();
-				packetPlayer.id = player.getId();
-				packetPlayer.name = player.getName();
-				packetPlayer.player = player.getPlayer();
-				packetPlayer.x = player.getX();
-				packetPlayer.y = player.getY();
-				
-				server.sendToAllTCP(packetPlayer);
-				
-				int index = 0;
-				
-				if (ProjectServer.players.size() == 1) {
-					Player other = null;
-					
-					if (giveNotNull() != 0)
-						index = giveNotNull();
-					
-					other = (Player)ProjectServer.players.get(index);
-					
-					PacketInitPlayer otherPlayer = new PacketInitPlayer();
-					otherPlayer.id = other.getId();
-					otherPlayer.name = other.getName();
-					otherPlayer.x = other.getX();
-					otherPlayer.y = other.getY();
-					
-					server.sendToTCP(connection.getID(), otherPlayer);
+					currentPlayerID = 2;
 				}
 				
-				ProjectServer.players.put(connection.getID(), player);
+				// SEND TO ALL CONNECTED PLAYER THE NEW PLAYER
+				PacketInitPlayer packetInitPlayer = wrapPlayer(player.getId(), player.getName(), player.getX(), player.getY());
+				server.sendToAllTCP(packetInitPlayer);
+				
+				// IF THERE IS ALREADY A CONNECTED PLAYER SEND A THIS PLAYER TO THE NEW PLAYER
+				if (ProjectServer.players.size() == 1) {
+					Player other = (Player)ProjectServer.players.get(1);
+					PacketInitPlayer packetInitPlayer2 = wrapPlayer(other.getId(), other.getName(), other.getX(), other.getY());
+					
+					server.sendToTCP(connection.getID(), packetInitPlayer2);
+				}
+				
+				ProjectServer.players.put(currentPlayerID, player);
 				
 				PacketMessage message = new PacketMessage();
 				PacketMessage messageToOther = new PacketMessage();
@@ -140,6 +128,17 @@ public class ServerListener extends Listener {
 		ProjectServer.players.remove(connection.getID());
 	}
 	
+	public PacketInitPlayer wrapPlayer(byte id, String name, short x, short y) {
+		PacketInitPlayer packetInitPlayer = new PacketInitPlayer();
+		
+		packetInitPlayer.id = id;
+		packetInitPlayer.name = name;
+		packetInitPlayer.x = x;
+		packetInitPlayer.y = y;
+		
+		return packetInitPlayer;
+	}
+	
 	public PacketPositionPlayer wrapPosition(Player player) {
 		PacketPositionPlayer position = new PacketPositionPlayer();
 		
@@ -151,33 +150,17 @@ public class ServerListener extends Listener {
 		return position;
 	}
 	
-	public boolean verify(String username, Connection connection) {
-		int index = 0;
-		
+	public boolean verify(String username) {
 		if (ProjectServer.players.size() == 2) {
 			Connect.message = "Server is full";
 			return false;
 		}
 		
-		if (ProjectServer.players.size() == 1) {
-			if (giveNotNull() != 0)
-				index = giveNotNull();
-			
-			if (username.equals(((Player)ProjectServer.players.get(index)).getName())) {
-				Connect.message = "Someone has the same username";
-				return false;
-			}
+		if (username.equals(((Player)ProjectServer.players.get(1)).getName())) {
+			Connect.message = "Someone has the same username";
+			return false;
 		}
-		
-		return true;
-	}
 	
-	public int giveNotNull() {
-		for (int i = 0; i < 10; i++) {
-			if (ProjectServer.players.get(i) != null)
-				return i;
-		}
-		
-		return 0;
+		return true;
 	}
 }
