@@ -5,6 +5,7 @@ import java.util.Random;
 import net.enteranamestudio.project.states.Game;
 import net.enteranamestudio.project.tiles.Flag;
 import net.enteranamestudio.project.tiles.Tile;
+import net.enteranamestudio.project.tiles.Wall;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
@@ -17,11 +18,11 @@ public class Map {
 	private int[][] background;
 	private Tile[][] tiles = new Tile[MAP_WIDTH][MAP_HEIGHT];
 	
-	private int spawn1X;
-	private int spawn1Y;
+	private short spawn1X;
+	private short spawn1Y;
 	
-	private int spawn2X;
-	private int spawn2Y;
+	private short spawn2X;
+	private short spawn2Y;
 	
 	private boolean loaded = false;
 	
@@ -45,6 +46,8 @@ public class Map {
 		
 		this.tiles[8][8] = new Flag(spawn1X, spawn1Y);
 		this.tiles[42][42] = new Flag(spawn2X, spawn2Y);
+		
+		this.tiles[2][2] = new Wall((short)2 * 48, (short)2 * 48, 1, 1);
 		
 		this.loaded = true;
 	}
@@ -88,19 +91,19 @@ public class Map {
 		this.tiles = newTiles;
 	}
 	
-	public void setSpawn1X(int spawn1x) {
+	public void setSpawn1X(short spawn1x) {
 		spawn1X = spawn1x;
 	}
 
-	public void setSpawn1Y(int spawn1y) {
+	public void setSpawn1Y(short spawn1y) {
 		spawn1Y = spawn1y;
 	}
 
-	public void setSpawn2X(int spawn2x) {
+	public void setSpawn2X(short spawn2x) {
 		spawn2X = spawn2x;
 	}
 
-	public void setSpawn2Y(int spawn2y) {
+	public void setSpawn2Y(short spawn2y) {
 		spawn2Y = spawn2y;
 	}
 

@@ -3,12 +3,12 @@ package net.enteranamestudio.project.tiles;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 
-public class Tile {
+public abstract class Tile {
 	
 	protected String name;
 	
-	protected int x;
-	protected int y;
+	protected short x;
+	protected short y;
 	protected Rectangle hitbox;
 	
 	protected int orientation; 
@@ -16,23 +16,19 @@ public class Tile {
 	protected boolean alive;
 	protected boolean colidable;
 	
-	public void tick() {
-		
-	}
+	public abstract void tick();
 	
-	public void render(Graphics g) {
-
-	}
+	public abstract void render(Graphics g);
 
 	public String getName() {
 		return name;
 	}
 
-	public int getX() {
+	public short getX() {
 		return x;
 	}
 
-	public int getY() {
+	public short getY() {
 		return y;
 	}
 

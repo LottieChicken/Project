@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class Flag extends Tile {
 	
-	public Flag(int x, int y) {
+	public Flag(short x, short y) {
 		this.name = "flag";
 		
 		this.x = x;
@@ -18,6 +18,10 @@ public class Flag extends Tile {
 	
 		this.alive = true;
 		this.colidable = false;
+	}
+	
+	public void tick() {
+		
 	}
 	
 	public void render(Graphics g) {

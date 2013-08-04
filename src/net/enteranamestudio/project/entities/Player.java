@@ -66,7 +66,7 @@ public class Player {
 	
 	public void render(Graphics g) {
 		if (init) {
-		//	g.fill(hitbox);
+	
 			
 			if (player == 1) {
 				g.rotate(x - Game.offX + 29, y - Game.offY + 20, -angle);
@@ -79,6 +79,8 @@ public class Player {
 				
 				g.resetTransform();
 			}
+			
+			g.fill(hitbox);
 		}
 	}
 	
@@ -155,8 +157,8 @@ public class Player {
 	}
 	
 	public void tickHitbox() {
-		this.hitbox.setX(x);
-		this.hitbox.setY(y);
+		this.hitbox.setX(x - Game.offX);
+		this.hitbox.setY(y - Game.offY);
 	}
 	
 	public void init(byte id, String name, int player, short x, short y) {
@@ -178,14 +180,14 @@ public class Player {
 	public void setLocation(short x, short y) {
 		this.x = x;
 		this.y = y;
-		this.hitbox.setLocation(x, y);
+		this.hitbox.setLocation(x - Game.offX, y - Game.offY);
 	}
 	
 	public void setLocation(short x, short y, float angle) {
 		this.x = x;
 		this.y = y;
 		this.angle = angle;
-		this.hitbox.setLocation(x, y);
+		this.hitbox.setLocation(x - Game.offX, y - Game.offY);
 	}
 
 	public byte getId() {

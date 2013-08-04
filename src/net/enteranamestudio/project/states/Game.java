@@ -106,7 +106,7 @@ public class Game extends BasicGameState {
 		
 		// PLAYER INFO MENU RENDER
 		Resources.playerInfo.draw();
-		Resources.faces.getSprite(player.getPlayer() - 1, 0).draw(0, -5, 0.5f);
+		Resources.faces.getSprite(player.getPlayer() - 1, 0).draw(0, 10, 0.5f);
 		Resources.lifeFull.draw(125, 9);
 		Resources.lifeBar.draw(124, 8);
 		g.drawString(""+player.getLife()+"/100", 160, 22);
