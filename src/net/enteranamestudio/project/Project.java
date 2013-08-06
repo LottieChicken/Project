@@ -50,7 +50,7 @@ public class Project extends StateBasedGame {
 			client.sendTCP(request);
 			
 			Game.client = client;
-			
+		
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

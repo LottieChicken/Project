@@ -43,13 +43,13 @@ public class ServerListener extends Listener {
 				}
 				
 				// SEND TO ALL CONNECTED PLAYER THE NEW PLAYER
-				PacketInitPlayer packetInitPlayer = wrapPlayer(player.getId(), player.getName(), player.getX(), player.getY());
+				PacketInitPlayer packetInitPlayer = wrapPlayer(player.getId(), player.getName(), player.getPlayer(), player.getX(), player.getY());
 				server.sendToAllTCP(packetInitPlayer);
 				
 				// IF THERE IS ALREADY A CONNECTED PLAYER SEND A THIS PLAYER TO THE NEW PLAYER
 				if (ProjectServer.players.size() == 1) {
 					Player other = (Player)ProjectServer.players.get(1);
-					PacketInitPlayer packetInitPlayer2 = wrapPlayer(other.getId(), other.getName(), other.getX(), other.getY());
+					PacketInitPlayer packetInitPlayer2 = wrapPlayer(other.getId(), other.getName(), other.getPlayer(), other.getX(), other.getY());
 					
 					server.sendToTCP(connection.getID(), packetInitPlayer2);
 				}
@@ -128,11 +128,12 @@ public class ServerListener extends Listener {
 		ProjectServer.players.remove(connection.getID());
 	}
 	
-	public PacketInitPlayer wrapPlayer(byte id, String name, short x, short y) {
+	public PacketInitPlayer wrapPlayer(byte id, String name, int player, short x, short y) {
 		PacketInitPlayer packetInitPlayer = new PacketInitPlayer();
 		
 		packetInitPlayer.id = id;
 		packetInitPlayer.name = name;
+		packetInitPlayer.player = player;
 		packetInitPlayer.x = x;
 		packetInitPlayer.y = y;
 		
@@ -156,9 +157,11 @@ public class ServerListener extends Listener {
 			return false;
 		}
 		
-		if (username.equals(((Player)ProjectServer.players.get(1)).getName())) {
-			Connect.message = "Someone has the same username";
-			return false;
+		if (ProjectServer.players.size() == 1) {
+			if (username.equals(((Player)ProjectServer.players.get(1)).getName())) {
+				Connect.message = "Someone has the same username";
+				return false;
+			}
 		}
 	
 		return true;

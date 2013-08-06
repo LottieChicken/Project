@@ -66,8 +66,6 @@ public class Player {
 	
 	public void render(Graphics g) {
 		if (init) {
-	
-			
 			if (player == 1) {
 				g.rotate(x - Game.offX + 29, y - Game.offY + 20, -angle);
 				
